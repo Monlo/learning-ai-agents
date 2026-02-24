@@ -1,8 +1,6 @@
 # Learning AI Agents
 
-A learning journal documenting my deep dive into AI agents, Claude Code, and the ecosystem around them -- from how models are trained to how I use them every day.
-
-This isn't a tutorial. It's structured notes from reading Anthropic's documentation, research papers, industry reports, and community resources, organized into a path that builds understanding layer by layer.
+A learning journal documenting my deep dive into AI agents, Claude Code, and the ecosystem around them . This isn't a tutorial. It's structured notes from reading Anthropic's documentation, research papers, industry reports, and community resources, organized into a path that builds understanding layer by layer.
 
 ## Learning Path
 
