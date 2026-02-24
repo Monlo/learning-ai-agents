@@ -67,5 +67,9 @@ Community-curated collection of patterns and tips. Key contributions: Command→
 
 | Resource | Type | Status |
 |----------|------|--------|
-| [Anthropic Economic Index](https://www.anthropic.com/economic-index#country-usage) | Report | Queued |
-| [AI-orchestrated cyber espionage report](https://assets.anthropic.com/m/ec212e6566a0d47/original/Disrupting-the-first-reported-AI-orchestrated-cyber-espionage-campaign.pdf) | PDF | Queued |
+| [Responsible Scaling Policy v2.2](https://www-cdn.anthropic.com/872c653b2d0501d6ab44cf87f43e1dc4853e4d37.pdf) | Policy document | Queued |
+| [Anthropic Economic Index](https://www.anthropic.com/economic-index#country-usage) | Interactive dashboard | Queued |
+| [Economic Index: New Building Blocks for Understanding AI Use](https://www.anthropic.com/research/economic-index-primitives) | Research blog post | Queued |
+| [Economic Index Report (PDF)](https://www-cdn.anthropic.com/c788cbc0a3da9135112f97cdf6dcd06f2c16cee2.pdf) | PDF report | Queued |
+| [Sabotage Risk Report: Claude Opus 4.6](https://www-cdn.anthropic.com/f21d93f21602ead5cdbecb8c8e1c765759d9e232.pdf) | Research report | Queued |
+| [Disrupting the First AI-Orchestrated Cyber Espionage Campaign](https://assets.anthropic.com/m/ec212e6566a0d47/original/Disrupting-the-first-reported-AI-orchestrated-cyber-espionage-campaign.pdf) | Report | Queued |
