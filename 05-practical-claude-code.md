@@ -367,3 +367,27 @@ claude plugin install cq
 ```
 
 **Why this matters:** CQ addresses the agent memory gap that no open standard covers yet. It's a more structured alternative to prompt-engineered markdown memory, designed for multiple agents sharing a knowledge base. Exploratory/proof-of-concept stage (818 stars), worth watching as the ecosystem matures.
+
+## The Pattern: Isolation + Graduated Trust
+
+Sandbox, auto mode, and CQ look like different features, but they're three applications of the same security pattern at different layers of the agent stack:
+
+```
+LAYER               WHAT'S ISOLATED           GRADUATED TRUST
+─────────────────────────────────────────────────────────────
+Sandbox mode        The agent's actions        Tier 1: /sandbox only
+                    (file access, network)     Tier 2: project files (with permission)
+                                               Tier 3: full system (dangerously-skip)
+
+Auto mode           The approval decision      Tier 1: read-only (always allowed)
+                    (who decides if it's safe)  Tier 2: in-project edits (bypass, use git)
+                                               Tier 3: high-risk ops (classifier evaluates)
+
+CQ                  The knowledge layer        Tier 1: local SQLite (private)
+                    (what agents remember)      Tier 2: team API in Docker (shared)
+                                               Tier 3: (future) cross-org sharing
+```
+
+**The principle:** Start restricted, earn more access based on demonstrated safety. Never give full access by default. Each layer isolates a different thing (actions, decisions, knowledge), but the trust gradient is the same.
+
+This pattern also appears in AI governance frameworks. The EU AI Act classifies systems by risk tier (minimal, limited, high, unacceptable) with graduated requirements. Anthropic's Responsible Scaling Policy does the same with model capabilities (ASL-1 through ASL-4). The technical implementation mirrors the policy design.
