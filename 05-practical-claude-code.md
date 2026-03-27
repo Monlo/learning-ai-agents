@@ -278,3 +278,92 @@ Community consensus: most people install 15+ MCP servers but only use 4-5 daily.
 - Put skills in `~/.claude/skills/` (global) if you want them available from any directory.
 - Claude Code launches from your current directory -- skills in `.claude/skills/` only work if that's where you run `claude` from.
 - Always commit to git before letting Claude make big changes -- this gives you a safe rollback point.
+
+## Auto Mode: AI Classifiers as Safety Layer
+
+**Source:** [Claude Code auto mode](https://www.anthropic.com/engineering/claude-code-auto-mode) (March 2026)
+
+The permission prompt problem: every file edit and bash command requires manual approval. Auto mode uses a second AI model (Sonnet 4.6) as an automated approver, replacing the human click with a classifier.
+
+**Two-stage classification:**
+
+```
+Claude wants to run a command
+  └── Stage 1: Fast single-token check (cheap, conservative)
+        ├── Looks safe → execute
+        └── Flagged → Stage 2: Chain-of-thought reasoning (expensive, nuanced)
+              ├── Approved → execute
+              └── Denied → block + tell Claude why
+```
+
+**Three tiers of trust:**
+
+| Tier | What | Classifier? | Rationale |
+|------|------|-------------|-----------|
+| 1 | Read-only tools | No (allowlist) | Can't cause harm |
+| 2 | In-project file edits | No (bypass) | Reviewable via git diff |
+| 3 | Shell commands, external access, out-of-project writes | Yes | High blast radius |
+
+**Key design decision: the classifier is reasoning-blind.** It only sees user messages and bare tool commands, never Claude's internal reasoning or tool outputs. This means Claude can't "talk the classifier into" approving something dangerous, and prompt injection in tool outputs can't influence decisions.
+
+**Intent matching:** Actions are evaluated against what the user actually asked for. "Clean up branches" does not authorize force-deleting remote branches. A script written to a file then executed is evaluated as the assembled command, not as benign file writing.
+
+**Real attacks caught:**
+
+| Attack | What happened |
+|--------|--------------|
+| Credential exploration | Agent searched env variables for API tokens after auth failed |
+| Data exfiltration | Created a public GitHub Gist with confidential debugging code |
+| Safety bypass | Retried failed deploy with `--no-verify` flags |
+| Scope escalation | Force-deleted remote branches from vague "clean up" instruction |
+
+**Multi-agent safety:** Classifiers run at both ends of subagent handoffs. Outbound checks verify delegated tasks align with user intent. Return checks review action history before results propagate back.
+
+**Performance (honest about limitations):**
+
+| Metric | Value |
+|--------|-------|
+| False positive rate (blocks safe actions) | 0.4% |
+| False negative on exfiltration | 5.7% |
+| False negative on overeager actions | 17% |
+
+The 17% miss rate means auto mode is not a replacement for careful human review on high-stakes infrastructure. It's designed for users who would otherwise use `--dangerously-skip-permissions`.
+
+**Connections:**
+- Trend 4 (human oversight scales): AI overseeing AI. The human reviews at a higher level.
+- Trend 8 (security-first): Safety built into the architecture via defense in depth.
+- Multi-agent systems (Trend 2): Classifiers at subagent boundaries show how oversight scales to agent teams.
+
+## Community Resources
+
+### CQ: Shared Agent Learning (Mozilla AI)
+
+**What it is:** An open standard for AI agents to share and learn from collective knowledge. When one agent solves a problem, other agents can learn from that experience instead of rediscovering the same failure.
+
+**Repository:** [github.com/mozilla-ai/cq](https://github.com/mozilla-ai/cq) (Apache 2.0)
+
+**Architecture:**
+
+```
+Agent (Claude Code / OpenCode)
+  └── Local MCP Server (FastMCP)
+        ├── Local SQLite DB (~/.local/share/cq/local.db)
+        │     Personal knowledge store, works offline
+        │
+        └── Team API (Docker, localhost:8742)
+              Shared knowledge layer via REST
+              Graduated tiers: local → team-shared
+```
+
+Three key design decisions:
+1. **Local-first.** Works immediately with SQLite, no configuration. Team sync is optional.
+2. **Knowledge tiers.** Insights graduate from local to team-shared. Not everything gets shared by default.
+3. **Post-error hooks.** After a failure, the agent automatically queries the knowledge base.
+
+**Installation in Claude Code:**
+```bash
+claude plugin marketplace add mozilla-ai/cq
+claude plugin install cq
+```
+
+**Why this matters:** CQ addresses the agent memory gap that no open standard covers yet. It's a more structured alternative to prompt-engineered markdown memory, designed for multiple agents sharing a knowledge base. Exploratory/proof-of-concept stage (818 stars), worth watching as the ecosystem matures.

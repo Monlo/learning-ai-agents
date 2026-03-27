@@ -25,8 +25,8 @@ A learning journal documenting my deep dive into AI agents, Claude Code, and the
 | 01 | [Industry Landscape](01-industry-landscape.md) | Agentic coding, 8 trends shaping 2026, the shift from implementer to orchestrator, Anthropic Economic Index (empirical data on AI's labor market impact) |
 | 02 | [How Models Work](02-how-models-work.md) | LLMs, tokens, context windows, temperature, the training pipeline |
 | 03 | [Safety & Alignment](03-safety-and-alignment.md) | RLHF, Constitutional AI, RLAIF, the HHH framework, Responsible Scaling Policy (organizational governance) |
-| 04 | [Connecting to the World](04-connecting-to-the-world.md) | MCP architecture, three primitives (tools/resources/prompts), RAG |
-| 05 | [Practical Claude Code](05-practical-claude-code.md) | Agent Skills, custom agents, hooks, MCP servers, best practices |
+| 04 | [Connecting to the World](04-connecting-to-the-world.md) | MCP architecture, three primitives (tools/resources/prompts), RAG, open standards landscape, agent memory |
+| 05 | [Practical Claude Code](05-practical-claude-code.md) | Agent Skills, custom agents, hooks, MCP servers, auto mode safety, community tools (CQ), best practices |
 | -- | [Resources](resources.md) | All sources with links, dates, and collapsible detailed summaries |
 
 ## What I'm Exploring
@@ -66,6 +66,8 @@ All resources are documented in [resources.md](resources.md), including:
 - [Claude Code Best Practices](https://github.com/shanraisshan/claude-code-best-practice) (community repo)
 - [Responsible Scaling Policy v2.2](https://www-cdn.anthropic.com/872c653b2d0501d6ab44cf87f43e1dc4853e4d37.pdf) (Anthropic)
 - [Anthropic Economic Index](https://www.anthropic.com/economic-index#country-usage) + [Building Blocks blog post](https://www.anthropic.com/research/economic-index-primitives)
+- [CQ: Open Standard for Shared Agent Learning](https://github.com/mozilla-ai/cq) (Mozilla AI)
+- [Claude Code auto mode: a safer way to skip permissions](https://www.anthropic.com/engineering/claude-code-auto-mode) (Anthropic)
 
 ---
 

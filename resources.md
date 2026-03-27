@@ -15,6 +15,8 @@ _Full summaries of every resource reviewed, with links and dates._
 | 7 | [Responsible Scaling Policy v2.2](https://www-cdn.anthropic.com/872c653b2d0501d6ab44cf87f43e1dc4853e4d37.pdf) | Policy document | 2026-02-24 | Staged deployment governance: 4 risk categories, mandatory red-teaming, hard stop if safety thresholds aren't met. CAI = training-level safety; RSP = organizational-level safety |
 | 8 | [Anthropic Economic Index](https://www.anthropic.com/economic-index#country-usage) | Interactive dashboard | 2026-02-26 | Dashboard exploring Claude usage across US states, countries, and hundreds of occupations; tracks augmentation vs. automation and trending topics by region |
 | 9 | [Economic Index: New Building Blocks](https://www.anthropic.com/research/economic-index-primitives) | Research blog post | 2026-02-26 | 5 economic primitives for measuring AI impact; 12x speedup on college-level tasks; 49% of jobs exposed; deskilling risk as AI handles higher-skill tasks; 1.0-1.2pp productivity growth |
+| 10 | [CQ: Open Standard for Shared Agent Learning](https://github.com/mozilla-ai/cq) | GitHub repo (Mozilla AI) | 2026-03-27 | Local-first knowledge persistence for AI agents; graduated sharing tiers; post-error hooks for collective learning; Claude Code plugin |
+| 11 | [Claude Code auto mode](https://www.anthropic.com/engineering/claude-code-auto-mode) | Engineering blog (Anthropic) | 2026-03-27 | Two-stage AI classifier replaces manual permission prompts; reasoning-blind design prevents prompt injection; 0.4% FPR but 17% miss rate on overeager actions |
 
 ## Detailed Summaries
 
@@ -90,10 +92,27 @@ Research blog post introducing 5 economic primitives for systematically measurin
 > See [01-industry-landscape.md](01-industry-landscape.md#measuring-the-impact-anthropic-economic-index)
 </details>
 
+<details>
+<summary><strong>10. CQ: Shared Agent Learning</strong> (Mozilla AI)</summary>
+
+Open-source framework (Apache 2.0) enabling AI agents to share and learn from collective knowledge. Local-first design with SQLite, optional team sync via REST API. Three key features: graduated knowledge tiers (local → team-shared), post-error hooks that automatically query the knowledge base after failures, and multi-runtime support (Claude Code plugin + OpenCode MCP server). Addresses the agent memory gap -- no open standard exists for how agents persist and share knowledge across sessions.
+
+> See [05-practical-claude-code.md](05-practical-claude-code.md#community-resources) and [04-connecting-to-the-world.md](04-connecting-to-the-world.md#open-standards-for-ai-agents)
+</details>
+
+<details>
+<summary><strong>11. Claude Code auto mode</strong> (Anthropic Engineering)</summary>
+
+Engineering blog post explaining how auto mode replaces manual permission prompts with AI classifiers. Two-stage architecture: fast single-token filter (Stage 1) plus chain-of-thought reasoning for flagged actions (Stage 2). Three trust tiers: read-only (always allowed), in-project edits (bypass, reviewable via git), high-risk operations (classifier evaluates). Key design decision: classifier is reasoning-blind -- it never sees Claude's internal reasoning or tool outputs, preventing prompt injection and self-justification. Performance: 0.4% false positive rate, 5.7% miss rate on exfiltration, 17% miss rate on overeager actions. Multi-agent safety via classifiers at subagent boundaries.
+
+> See [05-practical-claude-code.md](05-practical-claude-code.md#auto-mode-ai-classifiers-as-safety-layer)
+</details>
+
 ## To Review
 
-| Resource | Type | Status |
-|----------|------|--------|
-| [Economic Index Report (PDF)](https://www-cdn.anthropic.com/c788cbc0a3da9135112f97cdf6dcd06f2c16cee2.pdf) | PDF report | Queued |
-| [Sabotage Risk Report: Claude Opus 4.6](https://www-cdn.anthropic.com/f21d93f21602ead5cdbecb8c8e1c765759d9e232.pdf) | Research report | Queued |
-| [Disrupting the First AI-Orchestrated Cyber Espionage Campaign](https://assets.anthropic.com/m/ec212e6566a0d47/original/Disrupting-the-first-reported-AI-orchestrated-cyber-espionage-campaign.pdf) | Report | Queued |
+| Resource                                                                                                                                                                                            | Type            | Status |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- | ------ |
+| [Economic Index Report (PDF)](https://www-cdn.anthropic.com/c788cbc0a3da9135112f97cdf6dcd06f2c16cee2.pdf)                                                                                           | PDF report      | Queued |
+| [Sabotage Risk Report: Claude Opus 4.6](https://www-cdn.anthropic.com/f21d93f21602ead5cdbecb8c8e1c765759d9e232.pdf)                                                                                 | Research report | Queued |
+| [Disrupting the First AI-Orchestrated Cyber Espionage Campaign](https://assets.anthropic.com/m/ec212e6566a0d47/original/Disrupting-the-first-reported-AI-orchestrated-cyber-espionage-campaign.pdf) | Report          | Queued |
+| https://www.youtube.com/watch?v=GDm_uH6VxPY                                                                                                                                                         |                 |        |

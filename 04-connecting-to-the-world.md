@@ -83,3 +83,55 @@ One host connects to **many servers** simultaneously. Claude Code with 5 MCP ser
 ## RAG (Retrieval Augmented Generation)
 
 Instead of relying only on training data, you feed the model relevant documents at runtime. The model generates responses grounded in that retrieved evidence. Quality depends on what you retrieve. This is what happens when you paste a document or point Claude to a file.
+
+## Open Standards for AI Agents
+
+MCP is the most mature standard, but it only covers one problem: connecting agents to tools. Other layers of the agent stack don't have widely adopted standards yet.
+
+### What exists
+
+| Standard | Problem it solves | Who made it | Maturity |
+|----------|------------------|-------------|----------|
+| **MCP** | Agent-to-tool connection (data, APIs, services) | Anthropic | Adopted. Supported by Claude, Cursor, VS Code, OpenAI (adapting) |
+| **CQ** | Agent-to-agent knowledge sharing (collective learning from errors) | Mozilla AI | Exploratory. Proof of concept |
+| **A2A (Agent-to-Agent)** | Agent-to-agent communication across platforms | Google | Early stage |
+| **OpenAI Agents SDK** | Framework for building multi-agent systems | OpenAI | Open source but OpenAI-centric |
+
+### Gaps where no open standard exists
+
+- **Agent memory.** No protocol for how agents should store, retrieve, and share memories. Claude Code uses prompt-engineered markdown files, CQ uses SQLite, other tools use vector databases. None are interoperable.
+- **Agent identity and auth.** No standard for how an agent proves who it is to another agent or service. MCP handles tool auth (OAuth), but agent-to-agent trust is unsolved.
+- **Knowledge portability.** If you switch from one AI coding tool to another, your agent's accumulated knowledge doesn't transfer.
+
+### How agent memory works in practice
+
+Claude Code's memory is not a database. It's markdown files on your filesystem managed by prompt instructions.
+
+```
+~/.claude/projects/{project-path}/memory/
+├── MEMORY.md              ← Index file, always loaded into context at session start
+├── feedback_*.md          ← Individual memory files
+├── project_*.md
+└── reference_*.md
+```
+
+The mechanism: system prompt includes rules about what to save and when. The model uses file-writing tools to create markdown files. Next session, the index loads automatically and individual files are read when they seem relevant. There's no ML, no embeddings, no vector search. "Remembering" = writing a file. "Recalling" = reading a file. The intelligence is in the prompt rules, not in infrastructure.
+
+| Design choice | Strength | Weakness |
+|--------------|----------|----------|
+| Markdown files on disk | Readable, editable, transparent | No semantic search |
+| Model decides when to save | Flexible, context-aware | Inconsistent |
+| Index always loaded | Fast access | Caps at ~200 lines |
+| Pull-based (model reads when relevant) | Low overhead | Misses things if model doesn't check |
+
+**Compared to CQ's approach:**
+
+| | Claude Code memory | CQ |
+|---|---|---|
+| **Storage** | Markdown files (filesystem) | SQLite database |
+| **Query** | Model reads and pattern-matches in context | SQL queries (structured) |
+| **Trigger** | Pull-based: model decides to read | Push-based: post-error hooks fire automatically |
+| **Sharing** | Single user, single project | Local + team sync via REST API |
+| **Portability** | Locked to Claude Code's project path | Open standard (Apache 2.0) |
+
+The agent memory problem is where CQ and MCP could eventually converge: MCP defines how agents connect to tools, a future standard could define how agents connect to shared knowledge.
