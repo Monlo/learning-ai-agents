@@ -39,7 +39,7 @@ A learning journal documenting my deep dive into AI agents, Claude Code, and the
 - [x] Hooks and customization (post-error hooks, auto memory)
 - [x] CLAUDE.md project memory
 - [x] Agent Skills (custom skills built and working)
-- [ ] Custom Agents (`.claude/agents/`)
+- [x] Custom Agents (`.claude/agents/`)
 - [x] Rules (`.claude/rules/` -- path-scoped rules for career, deliverables, blog, context)
 - [ ] Sandbox mode
 - [x] Output styles (Learning mode active)
