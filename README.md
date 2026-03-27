@@ -35,14 +35,14 @@ A learning journal documenting my deep dive into AI agents, Claude Code, and the
 - [x] File reading and editing
 - [ ] Code generation and refactoring
 - [x] Using subagents and task delegation
-- [ ] MCP servers and integrations
-- [ ] Hooks and customization
+- [x] MCP servers and integrations (Canva MCP server in use)
+- [x] Hooks and customization (post-error hooks, auto memory)
 - [x] CLAUDE.md project memory
 - [x] Agent Skills (custom skills built and working)
 - [ ] Custom Agents (`.claude/agents/`)
-- [ ] Rules (`.claude/rules/`)
+- [x] Rules (`.claude/rules/` -- path-scoped rules for career, deliverables, blog, context)
 - [ ] Sandbox mode
-- [ ] Output styles (Explanatory, Learning, Custom)
+- [x] Output styles (Learning mode active)
 - [ ] Plugins
 
 ## How this repo is organized
