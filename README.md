@@ -68,6 +68,7 @@ All resources are documented in [resources.md](resources.md), including:
 - [Anthropic Economic Index](https://www.anthropic.com/economic-index#country-usage) + [Building Blocks blog post](https://www.anthropic.com/research/economic-index-primitives)
 - [CQ: Open Standard for Shared Agent Learning](https://github.com/mozilla-ai/cq) (Mozilla AI)
 - [Claude Code auto mode: a safer way to skip permissions](https://www.anthropic.com/engineering/claude-code-auto-mode) (Anthropic)
+- [Sabotage Risk Report: Claude Opus 4.6](https://www-cdn.anthropic.com/f21d93f21602ead5cdbecb8c8e1c765759d9e232.pdf) (Anthropic)
 
 ---
 

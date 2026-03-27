@@ -131,3 +131,60 @@ Higher-capability models face stricter evaluation criteria. Specific high-risk c
 Together they form a safety architecture where the model is trained to be safe (CAI) **and** the organization verifies it actually is before releasing it (RSP). Neither alone is sufficient — a well-trained model still needs external validation, and evaluations are only meaningful if the model was trained with safety in mind.
 
 This connects directly to [how Claude is built](02-how-models-work.md#the-training-pipeline): pretraining → fine-tuning → RLHF + CAI → then RSP evaluation before release.
+
+## Layer 3: Sabotage Risk Assessment
+
+**Source:** [Sabotage Risk Report: Claude Opus 4.6](https://www-cdn.anthropic.com/f21d93f21602ead5cdbecb8c8e1c765759d9e232.pdf) (Anthropic, 53 pages, March 2026)
+
+The RSP defines the framework. The Sabotage Risk Report applies it to a specific model. Before deploying Claude Opus 4.6, Anthropic assessed whether it could autonomously cause catastrophic harm through sabotage.
+
+**Sabotage defined:** When an AI model with access to powerful affordances within an organization uses those affordances to autonomously exploit, manipulate, or tamper with that organization's systems or decision-making in a way that raises the risk of future catastrophic outcomes (e.g. by altering the results of AI safety research, either inadvertently or due to its pursuit of dangerous goals).
+
+**Overall assessment:** "Very low but not negligible."
+
+### Four Claims
+
+| Claim | What it says |
+|-------|-------------|
+| 1. Prior expectations | Training process is unlikely to produce dangerous coherent misaligned goals |
+| 2. Alignment assessment | Simulated scenarios, interpretability research, and monitoring found no evidence of dangerous goals |
+| 3. Can't hide misalignment | Model is very unlikely to be capable of hiding dangerous goals from assessment |
+| 4. Limited capabilities | Can't reason opaquely or execute complex long-term plans well enough to sabotage despite safeguards |
+
+### Eight Sabotage Pathways
+
+| # | Pathway | Freq. | Complexity | Key mitigation |
+|---|---------|-------|-----------|----------------|
+| 1 | Diffuse sandbagging on safety R&D | High | Low | Lack of propensity |
+| 2 | Targeted sabotage of safety R&D | Low | High | Monitoring + code review |
+| 3 | Code backdoors for future models | Low | High | Standard security defenses |
+| 4 | Poisoning training data | Moderate | Moderate | Data review |
+| 5 | Self-exfiltration + autonomous operation | Low | High | Would fail visibly |
+| 6 | Persistent rogue internal deployment | Moderate | High | Compute monitoring |
+| 7 | R&D sabotage at other AI developers | Varied | Varied | Less monitoring (risk) |
+| 8 | Decision sabotage within governments | High | Moderate | Slow government AI adoption |
+
+### Key Findings
+
+- **SHADE-Arena:** Model succeeds at subtle side tasks only 18% of the time with monitoring. Low, but higher than prior models.
+- **LLM supervisor** monitors >90% of internal Claude Code use. Achieves 91-100% recall on attack detection.
+- **No steganographic reasoning** detected (hidden messages encoded in visible reasoning).
+- **Overeagerness is a real issue:** Sometimes takes risky actions without permission (unauthorized emails, aggressive auth token acquisition). Fixable by prompting in agentic coding but not in GUI settings.
+- **0 of 16 Anthropic staff** believed the model could replace an entry-level researcher within 3 months. Productivity uplift estimates: 30-700% (median 100%).
+
+### Honest Limitations
+
+- Mitigations are less effective against intentional data poisoning by human adversaries
+- Automatic monitors don't cover every deployment
+- Context-dependent misalignment (rare, triggered by unusual contexts) is harder to rule out
+- The report does NOT extend to future models. A table of "load-bearing claims" specifies what would invalidate it.
+
+### Three Layers of Safety
+
+| Layer | Mechanism | What it does |
+|-------|----------|-------------|
+| **CAI** | Training | Teaches the model values via constitutional principles |
+| **RSP** | Policy | Defines when to pause, what to evaluate, hard stops |
+| **Sabotage Risk Report** | Assessment | Evaluates a specific model against specific threat pathways before deployment |
+
+This is where safety connects to practice: the overeagerness finding in this report is exactly what [auto mode](../05-practical-claude-code.md#auto-mode-ai-classifiers-as-safety-layer) addresses. The classifier catches the actions this report flags as concerning. Theory (RSP) informs practice (auto mode) through assessment (this report).

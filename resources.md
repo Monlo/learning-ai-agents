@@ -17,6 +17,7 @@ _Full summaries of every resource reviewed, with links and dates._
 | 9 | [Economic Index: New Building Blocks](https://www.anthropic.com/research/economic-index-primitives) | Research blog post | 2026-02-26 | 5 economic primitives for measuring AI impact; 12x speedup on college-level tasks; 49% of jobs exposed; deskilling risk as AI handles higher-skill tasks; 1.0-1.2pp productivity growth |
 | 10 | [CQ: Open Standard for Shared Agent Learning](https://github.com/mozilla-ai/cq) | GitHub repo (Mozilla AI) | 2026-03-27 | Local-first knowledge persistence for AI agents; graduated sharing tiers; post-error hooks for collective learning; Claude Code plugin |
 | 11 | [Claude Code auto mode](https://www.anthropic.com/engineering/claude-code-auto-mode) | Engineering blog (Anthropic) | 2026-03-27 | Two-stage AI classifier replaces manual permission prompts; reasoning-blind design prevents prompt injection; 0.4% FPR but 17% miss rate on overeager actions |
+| 12 | [Sabotage Risk Report: Claude Opus 4.6](https://www-cdn.anthropic.com/f21d93f21602ead5cdbecb8c8e1c765759d9e232.pdf) | Risk report (Anthropic, 53p) | 2026-03-28 | RSP in practice: 8 sabotage pathways evaluated, "very low but not negligible" risk, 18% SHADE-Arena success, LLM supervisor 91-100% recall |
 
 ## Detailed Summaries
 
@@ -98,6 +99,14 @@ Research blog post introducing 5 economic primitives for systematically measurin
 Open-source framework (Apache 2.0) enabling AI agents to share and learn from collective knowledge. Local-first design with SQLite, optional team sync via REST API. Three key features: graduated knowledge tiers (local → team-shared), post-error hooks that automatically query the knowledge base after failures, and multi-runtime support (Claude Code plugin + OpenCode MCP server). Addresses the agent memory gap -- no open standard exists for how agents persist and share knowledge across sessions.
 
 > See [05-practical-claude-code.md](05-practical-claude-code.md#community-resources) and [04-connecting-to-the-world.md](04-connecting-to-the-world.md#open-standards-for-ai-agents)
+</details>
+
+<details>
+<summary><strong>12. Sabotage Risk Report: Claude Opus 4.6</strong> (Anthropic)</summary>
+
+53-page risk assessment evaluating whether Claude Opus 4.6 could autonomously sabotage systems it has access to. Sabotage is defined as an AI model using its affordances within an organization to exploit, manipulate, or tamper with systems or decision-making in ways that raise the risk of future catastrophic outcomes. Structured around four claims (no dangerous coherent misaligned goals, alignment assessment found no evidence, model can't hide misalignment, limited opaque reasoning capabilities) and eight concrete sabotage pathways (from diffuse sandbagging to government decision sabotage). Key quantitative findings: SHADE-Arena 18% success rate on subtle side tasks, LLM supervisor achieves 91-100% recall on attacks, 0/16 staff believe model could replace entry-level researcher. Identifies overeagerness as a real concern. Honest about limitations: context-dependent misalignment harder to rule out, monitors don't cover all deployments, doesn't extend to future models.
+
+> See [03-safety-and-alignment.md](03-safety-and-alignment.md#layer-3-sabotage-risk-assessment)
 </details>
 
 <details>
