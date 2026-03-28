@@ -11,7 +11,7 @@ _The practical layer: Claude Code, Agent Skills, and how everything fits togethe
 | SKILL.md | Core file of an Agent Skill: YAML frontmatter (name, description) + markdown body with instructions Claude follows | Agent Skills Docs |
 | Custom Agents | `.claude/agents/*.md` files that define specialized subagents with own name, color, tools, permissions, model, and preloaded skills | Best Practices Repo |
 | Rules | Topic-specific instructions in `.claude/rules/*.md` with path-scoping -- more granular than CLAUDE.md | Best Practices Repo |
-| Hooks | Deterministic scripts that run on specific Claude Code lifecycle events (PreToolUse, PostToolUse, Stop, SessionStart, etc.) | Best Practices Repo |
+| Hooks | User-defined handlers (command, HTTP, prompt, or agent) that execute at 24 lifecycle events. Can block, allow, or modify tool inputs. Four configuration scopes. | Hooks Docs |
 | Plugins | Distributable packages that bundle skills, agents, hooks, and MCP servers into a single installable unit | Best Practices Repo |
 | Sandbox | File and network isolation runtime (`/sandbox`) that reduces permission prompts while keeping Claude contained | Best Practices Repo |
 | Command → Agent → Skill pattern | Architecture where a slash command is the entry point, invokes an agent that orchestrates the workflow, with skills providing domain knowledge | Best Practices Repo |
@@ -194,20 +194,140 @@ The most powerful pattern for multi-step workflows:
 
 ## Hooks System
 
-Hooks are deterministic scripts that fire on Claude Code lifecycle events:
+Hooks are user-defined handlers that execute automatically at specific points in Claude Code's lifecycle. They're not just shell scripts: there are four types, each suited to different use cases.
 
-| Event | When it fires |
-|-------|--------------|
-| `PreToolUse` | Before a tool executes |
-| `PostToolUse` | After a tool executes |
-| `UserPromptSubmit` | When user sends a message |
-| `Notification` | When Claude sends a notification |
-| `Stop` | When Claude stops responding |
-| `SubagentStart/Stop` | When subagents launch or finish |
-| `PreCompact` | Before context compression |
-| `SessionStart/End` | Session lifecycle |
+### Four Hook Types
 
-Hooks live in `.claude/hooks/`. Can be used for sound notifications, logging, permission routing to Slack, or nudging Claude to continue turns.
+| Type | What it does | Use case |
+|------|-------------|----------|
+| **command** | Runs a shell script, receives event JSON on stdin | Linting, blocking destructive commands, loading context |
+| **http** | Sends event JSON as POST to an endpoint | External validation services, Slack notifications, logging |
+| **prompt** | Sends a prompt to a Claude model for yes/no decisions | "Is this command safe?" evaluations |
+| **agent** | Spawns a subagent with tool access (Read, Grep, Glob) | Complex verification that requires reading files before deciding |
+
+### Lifecycle Events
+
+24 events, grouped by when they fire:
+
+| Category | Events |
+|----------|--------|
+| **Session** | `SessionStart`, `SessionEnd`, `PreCompact`, `PostCompact` |
+| **User input** | `UserPromptSubmit` |
+| **Tool execution** | `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest` |
+| **Agent lifecycle** | `SubagentStart`, `SubagentStop`, `Stop`, `StopFailure`, `TeammateIdle` |
+| **Tasks** | `TaskCreated`, `TaskCompleted` |
+| **File/config** | `FileChanged`, `CwdChanged`, `ConfigChange`, `InstructionsLoaded` |
+| **Infrastructure** | `WorktreeCreate`, `WorktreeRemove`, `Notification` |
+| **MCP** | `Elicitation`, `ElicitationResult` |
+
+### Configuration
+
+Hooks are defined in settings JSON files. Four scopes, from broadest to narrowest:
+
+| Scope | File | Shared via git? |
+|-------|------|----------------|
+| User (all projects) | `~/.claude/settings.json` | No |
+| Project | `.claude/settings.json` | Yes |
+| Project-local | `.claude/settings.local.json` | No |
+| Managed policy | Organization settings | Yes |
+
+Hooks can also be defined in skill/agent YAML frontmatter (active only when that component runs).
+
+### How a Hook Works
+
+```
+Event fires → Matcher checks (regex on tool name or event type)
+  → If condition checks (permission rule syntax)
+    → Hook handler runs (script/HTTP/prompt/agent)
+      → Claude Code acts on the output
+```
+
+**Exit codes (command hooks):**
+- `0` = success. Parse JSON from stdout if present.
+- `2` = blocking error. Use stderr as error message.
+- Other = non-blocking error. Continue normally.
+
+**JSON output fields:**
+
+| Field | What it does |
+|-------|-------------|
+| `decision: "block"` | Prevent the action |
+| `decision: "allow"` | Permit without prompting |
+| `reason` | Explanation shown to Claude |
+| `updatedInput` | **Modify** the tool's input before execution |
+| `systemMessage` | Inject context into Claude's conversation |
+| `additionalContext` | Extra information for Claude |
+
+The `updatedInput` field is powerful: a PreToolUse hook can change what a tool actually executes, not just block or allow it.
+
+### Matcher Patterns
+
+The `matcher` field is a regex that filters when hooks fire:
+
+- Tool events: match on tool name (`Bash`, `Edit|Write`, `mcp__.*`)
+- MCP tools follow the pattern: `mcp__<server>__<tool>` (e.g., `mcp__memory__.*`)
+- SessionStart: `startup`, `resume`, `clear`, `compact`
+- FileChanged: filename to watch (`.env`, `.envrc`)
+- SubagentStart/Stop: agent name (`Bash`, `Explore`, `Plan`, or custom names)
+
+### Environment Variables
+
+| Variable | Available in | Purpose |
+|----------|-------------|---------|
+| `$CLAUDE_PROJECT_DIR` | All hooks | Project root path |
+| `$CLAUDE_ENV_FILE` | SessionStart, CwdChanged, FileChanged | Write environment variables that persist in the session |
+| `$CLAUDE_CODE_REMOTE` | All hooks | `"true"` if running in remote/web mode |
+
+Persisting environment variables (in SessionStart hooks):
+```bash
+if [ -n "$CLAUDE_ENV_FILE" ]; then
+  echo 'export NODE_ENV=production' >> "$CLAUDE_ENV_FILE"
+fi
+```
+
+### Examples
+
+**Block destructive commands (PreToolUse):**
+```json
+{
+  "hooks": {
+    "PreToolUse": [{
+      "matcher": "Bash",
+      "hooks": [{
+        "type": "command",
+        "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-rm.sh"
+      }]
+    }]
+  }
+}
+```
+
+**Run linting after file edits (PostToolUse):**
+```json
+{
+  "hooks": {
+    "PostToolUse": [{
+      "matcher": "Edit|Write",
+      "hooks": [{
+        "type": "command",
+        "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/lint-check.sh",
+        "timeout": 30
+      }]
+    }]
+  }
+}
+```
+
+**Load context on session start:**
+```bash
+#!/bin/bash
+echo "Recent changes:"
+git log --oneline -5
+echo "Open issues:"
+gh issue list --limit 3
+```
+
+Output from SessionStart hooks is added as context to Claude's conversation.
 
 ## Rules (`.claude/rules/`)
 

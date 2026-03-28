@@ -18,6 +18,7 @@ _Full summaries of every resource reviewed, with links and dates._
 | 10 | [CQ: Open Standard for Shared Agent Learning](https://github.com/mozilla-ai/cq) | GitHub repo (Mozilla AI) | 2026-03-27 | Local-first knowledge persistence for AI agents; graduated sharing tiers; post-error hooks for collective learning; Claude Code plugin |
 | 11 | [Claude Code auto mode](https://www.anthropic.com/engineering/claude-code-auto-mode) | Engineering blog (Anthropic) | 2026-03-27 | Two-stage AI classifier replaces manual permission prompts; reasoning-blind design prevents prompt injection; 0.4% FPR but 17% miss rate on overeager actions |
 | 12 | [Sabotage Risk Report: Claude Opus 4.6](https://www-cdn.anthropic.com/f21d93f21602ead5cdbecb8c8e1c765759d9e232.pdf) | Risk report (Anthropic, 53p) | 2026-03-28 | RSP in practice: 8 sabotage pathways evaluated, "very low but not negligible" risk, 18% SHADE-Arena success, LLM supervisor 91-100% recall |
+| 13 | [Claude Code Hooks Reference](https://code.claude.com/docs/en/hooks) | Documentation (Anthropic) | 2026-03-28 | 4 hook types (command, HTTP, prompt, agent), 24 lifecycle events, hooks can modify tool inputs, 4 configuration scopes, environment variable persistence |
 
 ## Detailed Summaries
 
@@ -26,7 +27,7 @@ _Full summaries of every resource reviewed, with links and dates._
 
 18-page industry report covering 8 trends across three categories: Foundation (how development work changes), Capability (what agents can do), and Impact (what agents change in business). Key insight: engineers shift from "implementer" to "orchestrator." The collaboration paradox -- AI is used in ~60% of work but only 0-20% can be fully delegated. Four priorities for 2026: multi-agent coordination, human-agent oversight, expanding beyond engineering, security-first architecture.
 
-> See [01-industry-landscape.md](01-industry-landscape.md)
+> See [topics/01-industry-landscape.md](topics/01-industry-landscape.md)
 </details>
 
 <details>
@@ -34,7 +35,7 @@ _Full summaries of every resource reviewed, with links and dates._
 
 Official documentation for Agent Skills -- modular, filesystem-based capability packages. Three-level progressive disclosure (metadata → instructions → resources) minimizes token cost. Skills work across Claude.ai, the API, Claude Code, and the Agent SDK. Pre-built skills for Office suite; custom skills via SKILL.md with YAML frontmatter. Security model: treat skills like installed software.
 
-> See [05-practical-claude-code.md](05-practical-claude-code.md)
+> See [topics/05-practical-claude-code.md](topics/05-practical-claude-code.md)
 </details>
 
 <details>
@@ -42,7 +43,7 @@ Official documentation for Agent Skills -- modular, filesystem-based capability 
 
 Open-source standard for connecting AI to external systems. Architecture: Host → Client → Server. Three primitives: Tools (model-controlled actions), Resources (application-controlled data), Prompts (user-controlled templates). Two transport layers: STDIO (local) and Streamable HTTP (remote with OAuth). JSON-RPC 2.0 for communication. Lifecycle: initialize → discover → execute → notify → shutdown.
 
-> See [04-connecting-to-the-world.md](04-connecting-to-the-world.md)
+> See [topics/04-connecting-to-the-world.md](topics/04-connecting-to-the-world.md)
 </details>
 
 <details>
@@ -50,7 +51,7 @@ Open-source standard for connecting AI to external systems. Architecture: Host �
 
 Core vocabulary covering three areas: (1) Training pipeline -- pretraining, fine-tuning, RLHF; (2) Operational concepts -- tokens (~3.5 chars each), context window (working memory), temperature (randomness), latency, TTFT; (3) Connection layer -- MCP, RAG, MCP Connector. Essential foundation for understanding how models are built and how they process text.
 
-> See [02-how-models-work.md](02-how-models-work.md)
+> See [topics/02-how-models-work.md](topics/02-how-models-work.md)
 </details>
 
 <details>
@@ -58,7 +59,7 @@ Core vocabulary covering three areas: (1) Training pipeline -- pretraining, fine
 
 Research paper introducing Constitutional AI (CAI) -- an alternative to pure RLHF. The core problem: standard RLHF creates a helpfulness-vs-harmlessness tradeoff (crowdworkers reward evasiveness). CAI solution: give the model written principles ("a constitution") for self-critique and self-revision. RLAIF (RL from AI Feedback) replaces/supplements human feedback. Result: Pareto improvement -- simultaneously more helpful AND more harmless. Policy implications: transparent principles readable by regulators, lower alignment costs, but dual-use risk.
 
-> See [03-safety-and-alignment.md](03-safety-and-alignment.md)
+> See [topics/03-safety-and-alignment.md](topics/03-safety-and-alignment.md)
 </details>
 
 <details>
@@ -66,7 +67,7 @@ Research paper introducing Constitutional AI (CAI) -- an alternative to pure RLH
 
 Community-curated collection of patterns and tips. Key contributions: Command→Agent→Skill architecture pattern, Boris Cherny's 12 tips, hooks system, rules with path-scoping, sandbox mode, MCP server recommendations (Context7, Playwright, Chrome, DeepWiki, Excalidraw), advanced API features (Programmatic Tool Calling, Tool Search, Dynamic Filtering), and workflow best practices (CLAUDE.md under 150 lines, /compact at 50% context, plan mode for complex tasks).
 
-> See [05-practical-claude-code.md](05-practical-claude-code.md)
+> See [topics/05-practical-claude-code.md](topics/05-practical-claude-code.md)
 </details>
 
 <details>
@@ -74,7 +75,7 @@ Community-curated collection of patterns and tips. Key contributions: Command→
 
 Anthropic's governance framework for safely scaling AI — concrete rules, not abstract principles. Defines four risk categories (high-risk capabilities, misuse potential, model deception & autonomy, systemic risks) and requires staged evaluations before deploying each capability tier. Includes mandatory red-teaming, capability assessments for high-risk functions, post-deployment monitoring, external consultation, and a hard stop commitment if safety thresholds aren't met. Key insight: higher-capability models face stricter evaluation. Connects to CAI as two complementary safety layers — model-level (training) and organizational-level (deployment).
 
-> See [03-safety-and-alignment.md](03-safety-and-alignment.md#layer-2-responsible-scaling-policy-rsp)
+> See [topics/03-safety-and-alignment.md](topics/03-safety-and-alignment.md#layer-2-responsible-scaling-policy-rsp)
 </details>
 
 <details>
@@ -98,7 +99,15 @@ Research blog post introducing 5 economic primitives for systematically measurin
 
 Open-source framework (Apache 2.0) enabling AI agents to share and learn from collective knowledge. Local-first design with SQLite, optional team sync via REST API. Three key features: graduated knowledge tiers (local → team-shared), post-error hooks that automatically query the knowledge base after failures, and multi-runtime support (Claude Code plugin + OpenCode MCP server). Addresses the agent memory gap -- no open standard exists for how agents persist and share knowledge across sessions.
 
-> See [05-practical-claude-code.md](05-practical-claude-code.md#community-resources) and [04-connecting-to-the-world.md](04-connecting-to-the-world.md#open-standards-for-ai-agents)
+> See [topics/05-practical-claude-code.md](topics/05-practical-claude-code.md#community-resources) and [topics/04-connecting-to-the-world.md](topics/04-connecting-to-the-world.md#open-standards-for-ai-agents)
+</details>
+
+<details>
+<summary><strong>13. Claude Code Hooks Reference</strong> (Anthropic Documentation)</summary>
+
+Complete reference for Claude Code's hook system. Four hook types: command (shell scripts), HTTP (POST to endpoints), prompt (Claude model decisions), and agent (subagents with tool access). 24 lifecycle events covering session, tool execution, agent lifecycle, tasks, file changes, and MCP interactions. Key capability: hooks can not only block or allow actions but modify tool inputs via `updatedInput`. Exit code protocol: 0 = success (parse JSON), 2 = blocking error, other = non-blocking. Four configuration scopes from user-wide to managed policy. Environment variable persistence via `$CLAUDE_ENV_FILE`. Hooks can be defined in settings files or in skill/agent YAML frontmatter.
+
+> See [topics/05-practical-claude-code.md](topics/05-practical-claude-code.md#hooks-system)
 </details>
 
 <details>
@@ -106,7 +115,7 @@ Open-source framework (Apache 2.0) enabling AI agents to share and learn from co
 
 53-page risk assessment evaluating whether Claude Opus 4.6 could autonomously sabotage systems it has access to. Sabotage is defined as an AI model using its affordances within an organization to exploit, manipulate, or tamper with systems or decision-making in ways that raise the risk of future catastrophic outcomes. Structured around four claims (no dangerous coherent misaligned goals, alignment assessment found no evidence, model can't hide misalignment, limited opaque reasoning capabilities) and eight concrete sabotage pathways (from diffuse sandbagging to government decision sabotage). Key quantitative findings: SHADE-Arena 18% success rate on subtle side tasks, LLM supervisor achieves 91-100% recall on attacks, 0/16 staff believe model could replace entry-level researcher. Identifies overeagerness as a real concern. Honest about limitations: context-dependent misalignment harder to rule out, monitors don't cover all deployments, doesn't extend to future models.
 
-> See [03-safety-and-alignment.md](03-safety-and-alignment.md#layer-3-sabotage-risk-assessment)
+> See [topics/03-safety-and-alignment.md](topics/03-safety-and-alignment.md#layer-3-sabotage-risk-assessment)
 </details>
 
 <details>
@@ -114,7 +123,7 @@ Open-source framework (Apache 2.0) enabling AI agents to share and learn from co
 
 Engineering blog post explaining how auto mode replaces manual permission prompts with AI classifiers. Two-stage architecture: fast single-token filter (Stage 1) plus chain-of-thought reasoning for flagged actions (Stage 2). Three trust tiers: read-only (always allowed), in-project edits (bypass, reviewable via git), high-risk operations (classifier evaluates). Key design decision: classifier is reasoning-blind -- it never sees Claude's internal reasoning or tool outputs, preventing prompt injection and self-justification. Performance: 0.4% false positive rate, 5.7% miss rate on exfiltration, 17% miss rate on overeager actions. Multi-agent safety via classifiers at subagent boundaries.
 
-> See [05-practical-claude-code.md](05-practical-claude-code.md#auto-mode-ai-classifiers-as-safety-layer)
+> See [topics/05-practical-claude-code.md](topics/05-practical-claude-code.md#auto-mode-ai-classifiers-as-safety-layer)
 </details>
 
 ## To Review

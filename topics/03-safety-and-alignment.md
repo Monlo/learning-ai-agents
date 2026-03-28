@@ -187,4 +187,4 @@ The RSP defines the framework. The Sabotage Risk Report applies it to a specific
 | **RSP** | Policy | Defines when to pause, what to evaluate, hard stops |
 | **Sabotage Risk Report** | Assessment | Evaluates a specific model against specific threat pathways before deployment |
 
-This is where safety connects to practice: the overeagerness finding in this report is exactly what [auto mode](../05-practical-claude-code.md#auto-mode-ai-classifiers-as-safety-layer) addresses. The classifier catches the actions this report flags as concerning. Theory (RSP) informs practice (auto mode) through assessment (this report).
+This is where safety connects to practice: the overeagerness finding in this report is exactly what [auto mode](05-practical-claude-code.md#auto-mode-ai-classifiers-as-safety-layer) addresses. The classifier catches the actions this report flags as concerning. Theory (RSP) informs practice (auto mode) through assessment (this report).
